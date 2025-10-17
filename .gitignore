@@ -1,0 +1,10 @@
+# JSON file after running python agent.py
+agent1qddlqsx7ch_data.json
+private_keys.json
+
+# API KEY
+.env
+
+# Python
+__pycache__/
+*.so
