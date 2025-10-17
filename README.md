@@ -42,6 +42,49 @@ INFO:     [Semiconductor Market Intelligence Agent]: Agent inspector available a
 INFO:     [Semiconductor Market Intelligence Agent]: Starting server on http://0.0.0.0:8008
 ```
 
+### **Connect to Agent**
+
+1. **Via Agentverse Inspector**:
+   - Copy the inspector URL from console
+   - Click `Connect` → Select `Mailbox`
+   - Follow [mailbox setup guide](https://innovationlab.fetch.ai/resources/docs/agent-creation/uagent-creation#mailbox-agents)
+
+2. **Via Agentverse Chat**:
+   - Go to `Agent Profile` → `Chat with Agent`
+   - Start interacting through the web interface
+
+### **Sample Queries**
+
+#### 🎯 Multi-Intent Analysis
+```
+"Analyze TSMC stock price based on latest news"
+"Should I invest in NVIDIA given recent developments?"
+"What's happening with AMD and should I buy?"
+"How do recent chip policy changes affect TSMC stock?"
+```
+
+#### 📈 Stock Price Tracking
+```
+"NVIDIA stock price"
+"What's TSMC trading at?"
+"Show me Broadcom price"
+```
+
+#### 📰 Real-Time News Intelligence
+```
+"What's the latest news about NVIDIA?"
+"Tell me recent semiconductor news"
+"What happened to TSMC this week?"
+"Show me Intel developments from last month"
+```
+
+#### 🏢 Company Analysis
+```
+"Tell me about NVIDIA's market position"
+"Analyze TSMC as an investment"
+"Evaluate AMD's competitive position"
+```
+
 ## ✨ Key Features
 
 ### 📰 **Multi-Source News Aggregation**
@@ -103,51 +146,6 @@ User Query: "Analyze NVIDIA stock based on latest news"
     └─► Response with Sources & URLs
 ```
 
-## 💬 Usage Examples
-
-### **Connect to Agent**
-
-1. **Via Agentverse Inspector**:
-   - Copy the inspector URL from console
-   - Click `Connect` → Select `Mailbox`
-   - Follow [mailbox setup guide](https://innovationlab.fetch.ai/resources/docs/agent-creation/uagent-creation#mailbox-agents)
-
-2. **Via Agentverse Chat**:
-   - Go to `Agent Profile` → `Chat with Agent`
-   - Start interacting through the web interface
-
-### **Sample Queries**
-
-#### 🎯 Multi-Intent Analysis
-```
-"Analyze TSMC stock price based on latest news"
-"Should I invest in NVIDIA given recent developments?"
-"What's happening with AMD and should I buy?"
-"How do recent chip policy changes affect TSMC stock?"
-```
-
-#### 📈 Stock Price Tracking
-```
-"NVIDIA stock price"
-"What's TSMC trading at?"
-"Show me Broadcom price"
-```
-
-#### 📰 Real-Time News Intelligence
-```
-"What's the latest news about NVIDIA?"
-"Tell me recent semiconductor news"
-"What happened to TSMC this week?"
-"Show me Intel developments from last month"
-```
-
-#### 🏢 Company Analysis
-```
-"Tell me about NVIDIA's market position"
-"Analyze TSMC as an investment"
-"Evaluate AMD's competitive position"
-```
-
 ## 📁 Project Structure
 
 ```
@@ -163,38 +161,6 @@ project/
 ├── .env                         # API keys (not in repo)
 ├── README.md                    # This file
 └── report-after-discussion-gpt.md  # Design documentation
-```
-
-## 🔬 Technical Highlights
-
-### **1. Intelligent News Filtering**
-
-```python
-# Problem: 50-100+ articles per query
-raw_articles = fetch_from_all_sources(query)  # 50+ articles
-
-# Solution: LLM-powered filtering
-important_articles = llm.filter(
-    articles=raw_articles,
-    criteria=["relevance", "reputation", "market_impact"],
-    top_n=15
-)
-
-# Result: Curated, actionable intelligence
-```
-
-### **2. MeTTa Hypergraph Reasoning**
-
-Unlike traditional databases or vector stores, MeTTa enables:
-
-```python
-# Query example: Find all AI chip companies
-result = metta.run("""
-    !(match &self (company_segment $company "AI chips")
-           (recommendation $company $rec)
-           ($company $rec))
-""")
-# Returns: [["NVIDIA", "BUY - AI market leader"], ...]
 ```
 
 ## 🔗 Resources

@@ -39,7 +39,6 @@ def get_intent_and_keyword(query, llm):
     
     try:
         response = llm.create_completion(prompt, max_tokens=200)
-        print(f"🔍 DEBUG: Raw LLM response for intent classification: {response}")
         
         # Clean the response - sometimes LLM includes extra text
         response_cleaned = response.strip()
@@ -52,10 +51,7 @@ def get_intent_and_keyword(query, llm):
         else:
             json_str = response_cleaned
         
-        print(f"🔍 DEBUG: Extracted JSON string: {json_str}")
-        
         result = json.loads(json_str)
-        print(f"🔍 DEBUG: Parsed JSON result: {result}")
         
         intents = result.get("intents", ["unknown"])
         company_name = result.get("company_name", None)

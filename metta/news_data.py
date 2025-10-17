@@ -36,8 +36,36 @@ def filter_news_with_llm(all_news, user_query, time_period, llm):
     
     try:
         response = llm.create_completion(prompt, max_tokens=300)
-        result = json.loads(response)
-        selected_indices = result.get("selected_articles", [])
+        print(f"🔍 DEBUG: LLM response for filtering: {response[:200]}...")
+        
+        # Try to extract JSON from the response
+        selected_indices = []
+        
+        try:
+            # First, try to parse the entire response as JSON
+            result = json.loads(response)
+            selected_indices = result.get("selected_articles", [])
+        except json.JSONDecodeError:
+            # If that fails, try to find JSON within the response
+            import re
+            json_match = re.search(r'\{[^}]*"selected_articles"[^}]*\}', response)
+            if json_match:
+                try:
+                    result = json.loads(json_match.group())
+                    selected_indices = result.get("selected_articles", [])
+                except json.JSONDecodeError:
+                    pass
+            
+            # If still no valid JSON, try to extract numbers from the response
+            if not selected_indices:
+                numbers = re.findall(r'\b(\d+)\b', response)
+                selected_indices = [int(num) for num in numbers if 1 <= int(num) <= len(all_news)]
+                selected_indices = selected_indices[:MAX_NEWS_ARTICLES]  # Limit to max articles
+        
+        if not selected_indices:
+            print(f"❌ Could not extract valid article indices from LLM response")
+            print(f"🔄 Falling back to first {MAX_NEWS_ARTICLES} articles")
+            return all_news[:MAX_NEWS_ARTICLES]
         
         # Convert 1-based indices to 0-based and filter
         filtered_news = []
