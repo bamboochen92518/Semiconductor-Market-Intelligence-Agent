@@ -218,9 +218,6 @@ MIT License - Part of ETH Global Online Hackathon 2025
 
 <div align="center">
 
-**Built with 🧠 for ETH Global Online Hackathon**  
-*October 2025*
-
 [🚀 Try Demo](https://agentverse.ai/agents/details/agent1qddlqsx7ch8c5g6h600w0cexmw46777nrc74p7qu6mmt9zpfevjeyxhny58/profile)
 
 </div>

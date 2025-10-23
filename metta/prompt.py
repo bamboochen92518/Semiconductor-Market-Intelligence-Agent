@@ -34,7 +34,7 @@ Extract entities:
 - company_name: Most relevant company (e.g., NVIDIA, TSMC, Intel)
 - time_period: Convert time context to Google News format (e.g., '2 hours' → '2h', 'today' → '1d', 'week' → '7d', 'month' → '30d')
 - topic: Other relevant topics (e.g., policy, AI_boom, Taiwan, earnings)
-- recommended_search_queries: Generate 2-3 optimized search queries for news APIs as a LIST (e.g., ['NVIDIA AI chips', 'NVIDIA earnings Q3', 'GPU market analysis'])
+- recommended_search_queries: Generate 2-3 optimized search queries for news APIs as a LIST (e.g., ['NVIDIA AI chips', 'NVIDIA earnings Q3', 'GPU market analysis']). DO NOT include time periods in these queries - focus on company names, topics, and keywords only.
 
 Return *only* the result in JSON format like this, with no additional text:
 {{
