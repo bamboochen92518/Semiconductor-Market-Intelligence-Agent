@@ -351,7 +351,9 @@ def build_source_references(news_list):
     source_references = "\n\n **NEWS SOURCES REFERENCED** \n"
     
     for i, news in enumerate(sorted_news, 1):
-        source_references += f"{i}. {news['title']}\n"
+        # Escape dollar signs in title to prevent markdown formatting issues
+        title = news['title'].replace('$', '\\$')
+        source_references += f"{i}. {title}\n"
         source_references += f"   Source: {news['source']} | Published: {news['published']}\n"
         if news['url']:
             source_references += f"   Link: {news['url']}\n"
