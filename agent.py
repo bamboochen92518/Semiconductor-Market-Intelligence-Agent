@@ -23,7 +23,7 @@ from metta.utils import LLM, process_query
 
 load_dotenv()
 
-agent = Agent(name="Semiconductor Market Intelligence Agent", port=8008, mailbox=True, publish_agent_details=True)
+agent = Agent(name="Semiconductor Market Intelligence Agent", port=8008, mailbox=True, publish_agent_details=True, readme_path = "README.md")
 
 class InvestmentQuery(Model):
     query: str
