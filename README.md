@@ -2,7 +2,17 @@
 
 > **AI-Powered 24/7 Market Analysis** | Integrating SingularityNET MeTTa Knowledge Graph & Fetch.ai uAgents
 
+![tag:innovationlab](https://img.shields.io/badge/innovationlab-3D8BD3)
+![tag:hackathon](https://img.shields.io/badge/hackathon-5F43F1)
+
 An autonomous AI agent that provides real-time semiconductor market analysis, combining intelligent news aggregation, live stock data, and structured knowledge reasoning to deliver institutional-grade investment insights.
+
+## 🤖 Agent Details
+
+- **Agent Name**: Semiconductor Market Intelligence Agent
+- **Agent Address**: `agent1qddlqsx7ch8c5g6h600w0cexmw46777nrc74p7qu6mmt9zpfevjeyxhny58`
+- **Category**: Innovation Lab
+- **Hackathon**: ETH Global Online 2025
 
 ## 🚀 Quick Start
 
@@ -211,6 +221,6 @@ MIT License - Part of ETH Global Online Hackathon 2025
 **Built with 🧠 for ETH Global Online Hackathon**  
 *October 2025*
 
-[🚀 Try Demo](https://agentverse.ai/) | [📖 Read Docs](./report-after-discussion-gpt.md) | [💬 Contact](https://github.com)
+[🚀 Try Demo](https://agentverse.ai/agents/details/agent1qddlqsx7ch8c5g6h600w0cexmw46777nrc74p7qu6mmt9zpfevjeyxhny58/profile)
 
 </div>
