@@ -103,3 +103,31 @@ Provide professional analysis covering:
 5. Actionable insights for semiconductor investors
 
 Reference specific articles by number when discussing developments. Be thorough since all articles contain valuable information."""
+
+def get_stock_analysis_prompt(company_name: str, stock_data: dict, context: str = "") -> str:
+    """Generate prompt for LLM analysis including stock data"""
+    if not stock_data:
+        return f"No stock data available for {company_name}. {context}"
+        
+    current = stock_data.get('current', {})
+    
+    prompt = f"""
+=== REAL-TIME STOCK DATA ===
+Company: {company_name} ({stock_data.get('symbol', 'N/A')})
+Current Price: ${current.get('current_price', 'N/A')}
+Daily Change: ${current.get('change', 'N/A')} ({current.get('change_percent', 'N/A')}%)
+Volume: {current.get('volume', 'N/A'):,}
+Market Cap: {current.get('market_cap', 'N/A')}
+Last Updated: {current.get('timestamp', 'N/A')}
+
+{context}
+
+Provide analysis that:
+1. Interprets the current stock price movement
+2. Analyzes volume patterns and market sentiment  
+3. Connects stock performance to recent news/events
+4. Assesses if the price reflects company fundamentals
+5. Identifies potential trading opportunities or risks
+"""
+    
+    return prompt
