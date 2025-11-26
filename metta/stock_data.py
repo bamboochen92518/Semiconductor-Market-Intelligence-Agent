@@ -34,7 +34,7 @@ class StockDataFetcher:
         """Core function to fetch stock data - all other functions use this"""
         try:
             ticker = yf.Ticker(symbol)
-            hist = ticker.history(period=period, interval=interval)
+            hist = ticker.history(period=period, interval=interval, prepost=True)
             
             if (hist.empty):
                 return None
@@ -83,53 +83,37 @@ class StockDataFetcher:
         }
     
     def get_price_at_time(self, symbol: str, minutes_ago: int) -> Optional[float]:
-        """Get stock price from X minutes ago"""
-        # Calculate period needed
-        hours_needed = max(1, (minutes_ago + 60) // 60)
-        period = f"{hours_needed}d" if hours_needed > 1 else "1d"
-        
-        data = self._fetch_stock_history(symbol, period=period, interval="1m")
+        """Get stock price from X minutes ago - simplified approach"""
+        data = self._fetch_stock_history(symbol, period="1d", interval="1m")
         if not data or data["hist_data"].empty:
             return None
         
         hist = data["hist_data"]
-        target_time = datetime.now() - timedelta(minutes=minutes_ago)
         
-        # Check if we're looking for a time when market was closed
-        latest_data_time = hist.index[-1]
-        if hasattr(latest_data_time, 'tz_localize'):
-            latest_data_time = latest_data_time.tz_localize(None)
-        elif latest_data_time.tzinfo:
-            latest_data_time = latest_data_time.replace(tzinfo=None)
+        # Check if latest data is recent enough (within 1 minute)
+        latest_time = hist.index[-1]
+        if hasattr(latest_time, 'tz_localize'):
+            latest_time = latest_time.tz_localize(None)
+        elif latest_time.tzinfo:
+            latest_time = latest_time.replace(tzinfo=None)
         
-        time_diff_hours = (datetime.now() - latest_data_time).total_seconds() / 3600
+        time_diff_seconds = (datetime.now() - latest_time).total_seconds()
         
-        # If market data is too old, return None
-        if time_diff_hours > 24:
+        # If latest data is older than 1 minute, print warning and return None
+        if time_diff_seconds > 60:
+            print(f"⚠️ Latest data for {symbol} is {time_diff_seconds/60:.1f} minutes old (timestamp: {latest_time})")
             return None
         
-        closest_price = None
-        min_time_diff = float('inf')
+        # Use simple indexing: -1 is current, -5 is ~5 minutes ago, etc.
+        target_index = -min(minutes_ago, len(hist))
         
-        for timestamp, row in hist.iterrows():
-            # Normalize timestamp for comparison
-            hist_time = timestamp
-            if hasattr(hist_time, 'tz_localize'):
-                hist_time = hist_time.tz_localize(None)
-            elif hist_time.tzinfo:
-                hist_time = hist_time.replace(tzinfo=None)
-            
-            time_diff = abs((hist_time - target_time).total_seconds())
-            
-            if time_diff < min_time_diff:
-                min_time_diff = time_diff
-                closest_price = row['Close']
-        
-        # Return None if time difference is too large (more than 15 minutes)
-        if min_time_diff > 900:
+        # Make sure we have enough data points
+        if abs(target_index) > len(hist):
+            print(f"⚠️ Not enough historical data for {symbol} (requested: {minutes_ago} min ago, available: {len(hist)} points)")
             return None
         
-        return round(closest_price, 2) if closest_price is not None else None
+        target_price = hist['Close'].iloc[target_index]
+        return round(target_price, 2)
     
     def get_historical_data(self, symbol: str, period: str = "5d", interval: str = "1d", max_points: int = 20) -> Optional[Dict]:
         """Get historical price data"""
@@ -182,11 +166,16 @@ class StockDataFetcher:
         if not current_data:
             return None
             
+        # Try to get intraday data first, fall back to daily if not available
+        intraday_history = self.get_historical_data(symbol, period="1d", interval="1m", max_points=50)
+        daily_history = self.get_historical_data(symbol, period="5d", interval="1d", max_points=20)
+        
         return {
             "company": company_name,
             "symbol": symbol,
             "current": current_data,
-            "history": self.get_historical_data(symbol)  # Only fetch if needed
+            "history": intraday_history if intraday_history else daily_history,
+            "daily_history": daily_history  # Keep daily data for longer-term analysis
         }
         
     def fetch_sector_overview(self) -> Dict:

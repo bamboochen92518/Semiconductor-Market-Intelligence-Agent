@@ -23,8 +23,8 @@ class StockMonitor:
         }
     
     async def check_volatility(self) -> List[Dict]:
-        """Simple volatility check: compare current price vs 15 minutes ago"""
-        print("🔍 Checking 15-minute price changes...")
+        """Simple volatility check: compare current price vs 5 minutes ago"""
+        print("🔍 Checking 5-minute price changes...")
         
         alerts = []
         
@@ -38,42 +38,42 @@ class StockMonitor:
                 symbol = stock_data['symbol'] 
                 current_price = stock_data['current']['current_price']
                 
-                # Get price from 15 minutes ago
-                price_15min_ago = stock_fetcher.get_price_at_time(symbol, 15)
+                # Get price from 5 minutes ago
+                price_5min_ago = stock_fetcher.get_price_at_time(symbol, 5)
                 
-                if not price_15min_ago or price_15min_ago <= 0:
-                    print(f"📊 {company} ({symbol}): ${current_price:.2f} (no 15min data)")
+                if not price_5min_ago or price_5min_ago <= 0:
+                    print(f"📊 {company} ({symbol}): ${current_price:.2f} (no 5min data)")
                     continue
                 
                 # Calculate percentage change
-                change_percent = ((current_price - price_15min_ago) / price_15min_ago) * 100
+                change_percent = ((current_price - price_5min_ago) / price_5min_ago) * 100
                 
-                print(f"📊 {company} ({symbol}): {change_percent:+.2f}% (${price_15min_ago:.2f} → ${current_price:.2f})")
+                print(f"📊 {company} ({symbol}): {change_percent:+.2f}% (${price_5min_ago:.2f} → ${current_price:.2f})")
                 
                 # Check if it exceeds thresholds
                 if abs(change_percent) >= self.volatility_thresholds["extreme"]:
                     severity = 'extreme'
-                    trigger = f'Extreme 15-minute volatility: {change_percent:+.2f}%'
+                    trigger = f'Extreme 5-minute volatility: {change_percent:+.2f}%'
                 elif abs(change_percent) >= self.volatility_thresholds["high"]:
                     severity = 'high' 
-                    trigger = f'High 15-minute volatility: {change_percent:+.2f}%'
+                    trigger = f'High 5-minute volatility: {change_percent:+.2f}%'
                 else:
                     continue  # No alert needed
                 
                 # Get LLM analysis
                 llm_analysis = await self._analyze_stock_event_with_llm(
-                    company, symbol, change_percent, current_price, price_15min_ago, "15 minutes"
+                    company, symbol, change_percent, current_price, price_5min_ago, "5 minutes"
                 )
                 
                 alert = {
                     'company': company,
                     'symbol': symbol,
                     'current_price': current_price,
-                    'previous_price': price_15min_ago,
+                    'previous_price': price_5min_ago,
                     'change_percent': change_percent,
                     'trigger_reason': trigger,
                     'severity': severity,
-                    'time_period': '15 minutes',
+                    'time_period': '5 minutes',
                     'llm_analysis': llm_analysis
                 }
                 alerts.append(alert)

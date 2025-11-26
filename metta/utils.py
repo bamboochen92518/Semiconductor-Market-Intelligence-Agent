@@ -71,7 +71,7 @@ def get_intent_and_keyword(query, llm):
         print(f"❌ Response: {response}")
         return ["unknown"], None, "3d", None, ["semiconductor"]
 
-def process_query(query, rag: InvestmentRAG, llm: LLM):
+def process_query(query, rag: InvestmentRAG, llm: LLM, output_length=None):
     intents, company_name, time_period, topic, recommended_search_queries = get_intent_and_keyword(query, llm)
     print(f"Intents: {intents}, Company: {company_name}, Time: {time_period}, Topic: {topic}")
     print(f"LLM-generated search queries: {recommended_search_queries}")
@@ -231,7 +231,53 @@ def process_query(query, rag: InvestmentRAG, llm: LLM):
     
     # Build final prompt
     prompt = "".join(prompt_sections)
-    prompt += "Provide professional semiconductor market analysis. Be comprehensive and actionable."
+    
+    # Add structured report format instruction
+    prompt += """
+Please provide a comprehensive semiconductor market analysis following this exact structure:
+
+### 📈 EXECUTIVE SUMMARY
+Provide a 2-3 sentence overview of the key findings and current market situation.
+
+### 📰 WHAT HAPPENED? (Market Events & News)
+Summarize the most significant recent developments, news, and events that are impacting the market. Include specific dates and sources when available.
+
+### 📊 CURRENT MARKET STATUS
+Present the current financial and market data including:
+- Stock prices and performance
+- Market capitalization changes  
+- Trading volumes and trends
+- Key financial metrics
+
+### 🔍 ANALYSIS & IMPLICATIONS
+Analyze what these developments mean for:
+- The specific company/companies involved
+- The broader semiconductor industry
+- Investor positioning and market sentiment
+- Supply chain and competitive dynamics
+
+### ⚠️ RISKS & CHALLENGES
+Identify and explain:
+- Immediate risks and concerns
+- Medium-term challenges
+- Regulatory or geopolitical factors
+- Market volatility factors
+
+### 💡 INVESTMENT RECOMMENDATION
+Provide clear, actionable investment guidance:
+- Overall recommendation (Buy/Hold/Sell or Bullish/Neutral/Bearish)
+- Price targets or key levels to watch
+- Timeline for the recommendation
+- Risk management considerations
+
+### 🎯 KEY TAKEAWAYS
+Bullet point the 3-5 most important points investors should remember.
+
+Please ensure each section is substantive and backed by the data provided. Use professional financial analysis language while remaining accessible."""
+    
+    # Add word limit instruction if output_length is specified
+    if output_length is not None:
+        prompt += f"\n\nIMPORTANT: You should output {output_length} words only while maintaining the structure above."
     
     print(f"\n🔍 DEBUG: Sending prompt to LLM...")
     print(f"Prompt length: {len(prompt)} characters")

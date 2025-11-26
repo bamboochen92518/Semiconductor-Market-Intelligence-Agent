@@ -28,12 +28,12 @@ class ScheduledTaskManager:
         # Execute market report at the top of every hour
         schedule.every().hour.at(":00").do(self._run_hourly_report)
         
-        # Check stock volatility every 15 minutes
-        schedule.every(15).minutes.do(self._run_volatility_check)
+        # Check stock volatility every 5 minutes
+        schedule.every(5).minutes.do(self._run_volatility_check)
         
         print("📅 Scheduled tasks configured:")
         print("   📊 Hourly market report: Every hour at :00")
-        print("   🚨 Volatility monitoring: Every 15 minutes")
+        print("   🚨 Volatility monitoring: Every 5 minutes")
     
     def start(self):
         """Start scheduled tasks"""
@@ -52,7 +52,7 @@ class ScheduledTaskManager:
         
         print("🚀 Scheduled task manager started")
         print(f"⏰ Next hourly report: {self._get_next_hour_time()}")
-        print(f"🔍 Volatility checks: Every 15 minutes")
+        print(f"🔍 Volatility checks: Every 5 minutes")
     
     def stop(self):
         """Stop scheduled tasks"""
@@ -127,7 +127,7 @@ class ScheduledTaskManager:
             query = "What happened in semiconductor market in the past hour?"
             
             # Generate market analysis
-            response = process_query(query, self.rag, self.llm)
+            response = process_query(query, self.rag, self.llm, output_length=512)
             
             if isinstance(response, dict):
                 market_analysis = response.get('humanized_answer', 'Unable to generate market analysis')
@@ -152,7 +152,7 @@ class ScheduledTaskManager:
             print(f"❌ Error generating hourly report: {e}")
     
     async def _quick_volatility_check(self):
-        """Quick volatility check (compare prices from 15 minutes ago)"""
+        """Quick volatility check (compare prices from 5 minutes ago)"""
         try:
             alerts = []
             
@@ -167,60 +167,60 @@ class ScheduledTaskManager:
                     symbol = stock_data['symbol']
                     current_price = current_data['current_price']
                     
-                    # Get price from 15 minutes ago directly from yfinance
-                    price_15min_ago = stock_fetcher.get_price_at_time(symbol, 15)
+                    # Get price from 5 minutes ago directly from yfinance
+                    price_5min_ago = stock_fetcher.get_price_at_time(symbol, 5)
                     
-                    if price_15min_ago and price_15min_ago > 0:
-                        # Calculate price change percentage over 15 minutes
-                        price_change_percent = ((current_price - price_15min_ago) / price_15min_ago) * 100
+                    if price_5min_ago and price_5min_ago > 0:
+                        # Calculate price change percentage over 5 minutes
+                        price_change_percent = ((current_price - price_5min_ago) / price_5min_ago) * 100
                         
-                        print(f"📊 {company} ({symbol}): 15min change {price_change_percent:+.2f}% (${price_15min_ago:.2f} → ${current_price:.2f})")
+                        print(f"📊 {company} ({symbol}): 5min change {price_change_percent:+.2f}% (${price_5min_ago:.2f} → ${current_price:.2f})")
                         
                         # Check if it exceeds the threshold
                         if abs(price_change_percent) >= stock_monitor.volatility_thresholds["extreme"]:
                             # Get LLM analysis
                             llm_analysis = await stock_monitor._analyze_stock_event_with_llm(
                                 company, symbol, price_change_percent, 
-                                current_price, price_15min_ago, "15 minutes"
+                                current_price, price_5min_ago, "5 minutes"
                             )
                             
                             alert_info = {
                                 'company': company,
                                 'symbol': symbol,
                                 'current_price': current_price,
-                                'previous_price': price_15min_ago,
+                                'previous_price': price_5min_ago,
                                 'change_percent': price_change_percent,
-                                'trigger_reason': f'Extreme 15-minute volatility: {price_change_percent:+.2f}%',
+                                'trigger_reason': f'Extreme 5-minute volatility: {price_change_percent:+.2f}%',
                                 'severity': 'extreme',
-                                'time_period': '15 minutes',
+                                'time_period': '5 minutes',
                                 'llm_analysis': llm_analysis
                             }
                             alerts.append(alert_info)
-                            print(f"🚨 EXTREME volatility alert for {company}: {price_change_percent:+.2f}% in 15 minutes")
+                            print(f"🚨 EXTREME volatility alert for {company}: {price_change_percent:+.2f}% in 5 minutes")
                             
                         elif abs(price_change_percent) >= stock_monitor.volatility_thresholds["high"]:
                             # Get LLM analysis
                             llm_analysis = await stock_monitor._analyze_stock_event_with_llm(
                                 company, symbol, price_change_percent, 
-                                current_price, price_15min_ago, "15 minutes"
+                                current_price, price_5min_ago, "5 minutes"
                             )
                             
                             alert_info = {
                                 'company': company,
                                 'symbol': symbol,
                                 'current_price': current_price,
-                                'previous_price': price_15min_ago,
+                                'previous_price': price_5min_ago,
                                 'change_percent': price_change_percent,
-                                'trigger_reason': f'High 15-minute volatility: {price_change_percent:+.2f}%',
+                                'trigger_reason': f'High 5-minute volatility: {price_change_percent:+.2f}%',
                                 'severity': 'high',
-                                'time_period': '15 minutes',
+                                'time_period': '5 minutes',
                                 'llm_analysis': llm_analysis
                             }
                             alerts.append(alert_info)
-                            print(f"🚨 HIGH volatility alert for {company}: {price_change_percent:+.2f}% in 15 minutes")
+                            print(f"🚨 HIGH volatility alert for {company}: {price_change_percent:+.2f}% in 5 minutes")
                     else:
-                        # Unable to get 15-minute historical data
-                        print(f"📊 {company} ({symbol}): ${current_price:.2f} (unable to get 15-min history)")
+                        # Unable to get 5-minute historical data
+                        print(f"📊 {company} ({symbol}): ${current_price:.2f} (unable to get 5-min history)")
             
             # If there are alerts, send them immediately
             if alerts:
@@ -249,7 +249,7 @@ class ScheduledTaskManager:
         
         for company, data in sector_overview.items():
             if isinstance(data, dict) and 'symbol' in data:
-                sector_text += f"{company:15} ({data['symbol']:4}): ${data['price']:8.2f} ({data['change_percent']:+6.2f}%)\n"
+                sector_text += f"{company:5} ({data['symbol']:4}): ${data['price']:8.2f} ({data['change_percent']:+6.2f}%)\n"
         
         # Combine full report
         full_report = f"""

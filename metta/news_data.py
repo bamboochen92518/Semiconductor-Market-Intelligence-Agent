@@ -348,7 +348,7 @@ def build_source_references(news_list):
         print(f"Error sorting news by date: {e}")
         sorted_news = news_list
     
-    source_references = "\n\n **NEWS SOURCES REFERENCED** \n"
+    source_references = "\n\n### NEWS SOURCES REFERENCED\n\n"
     
     for i, news in enumerate(sorted_news, 1):
         # Escape dollar signs in title to prevent markdown formatting issues
