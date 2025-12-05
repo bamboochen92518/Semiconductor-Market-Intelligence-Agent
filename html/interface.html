@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semiconductor Market Intelligence Agent - Email Subscription</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .header .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .features {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .features h3 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+
+        .feature-item:hover {
+            transform: translateX(5px);
+        }
+
+        .feature-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .feature-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .feature-text {
+            color: #555;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="email"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="email"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button:hover:before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .subscribe-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .subscribe-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .cancel-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(244, 67, 54, 0.4);
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="icon">📊💎</div>
+            <h1>Semiconductor Market Intelligence Agent</h1>
+            <p class="subtitle">Stay ahead with real-time market insights</p>
+        </div>
+
+        <div class="features">
+            <h3>📧 What You'll Receive:</h3>
+            <div class="feature-item">
+                <div class="feature-icon">⏰</div>
+                <div class="feature-text">
+                    <strong>Hourly Market Reports</strong> - Comprehensive updates every hour at :00
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">📈</div>
+                <div class="feature-text">
+                    <strong>Volatility Alerts</strong> - Instant notifications when stocks move >5%
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🔔</div>
+                <div class="feature-text">
+                    <strong>System Notifications</strong> - Stay informed about system status and updates
+                </div>
+            </div>
+        </div>
+
+        <form id="subscriptionForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="your.email@example.com" 
+                    required
+                    autocomplete="email"
+                >
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="subscribe-btn">
+                    ✓ Subscribe
+                </button>
+                <button type="button" class="cancel-btn" id="cancelBtn">
+                    ✕ Cancel Subscription
+                </button>
+            </div>
+        </form>
+
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('subscriptionForm');
+        const emailInput = document.getElementById('email');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const messageDiv = document.getElementById('message');
+
+        // Request notification permission on page load
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+
+        function showNotification(title, body, icon = '📊') {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(title, {
+                    body: body,
+                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="0.9em" font-size="90">' + icon + '</text></svg>',
+                    badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="0.9em" font-size="90">💎</text></svg>',
+                    requireInteraction: false,
+                    silent: false
+                });
+            } else if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        showNotification(title, body, icon);
+                    }
+                });
+            }
+        }
+
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Subscribe functionality
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = emailInput.value.trim();
+            
+            if (!validateEmail(email)) {
+                showMessage('Please enter a valid email address.', 'error');
+                showNotification('❌ Invalid Email', 'Please enter a valid email address.', '❌');
+                return;
+            }
+
+            // Simulate API call
+            try {
+                // Here you would make an actual API call to your backend
+                // await fetch('/api/subscribe', { method: 'POST', body: JSON.stringify({ email }) });
+                
+                showMessage(`✓ Successfully subscribed ${email} to Semiconductor Market Intelligence!`, 'success');
+                showNotification(
+                    '✅ Subscription Successful!', 
+                    `${email} is now subscribed to Semiconductor Market Intelligence. You'll receive hourly reports and volatility alerts.`,
+                    '✅'
+                );
+                emailInput.value = '';
+                
+                console.log('Subscribed:', email);
+            } catch (error) {
+                showMessage('An error occurred. Please try again later.', 'error');
+                showNotification('❌ Subscription Failed', 'An error occurred. Please try again later.', '❌');
+                console.error('Subscription error:', error);
+            }
+        });
+
+        // Cancel subscription functionality
+        cancelBtn.addEventListener('click', async () => {
+            const email = emailInput.value.trim();
+            
+            if (!email) {
+                showMessage('Please enter your email address to cancel subscription.', 'info');
+                emailInput.focus();
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                showMessage('Please enter a valid email address.', 'error');
+                showNotification('❌ Invalid Email', 'Please enter a valid email address.', '❌');
+                return;
+            }
+
+            if (confirm(`Are you sure you want to cancel subscription for ${email}?`)) {
+                try {
+                    // Here you would make an actual API call to your backend
+                    // await fetch('/api/unsubscribe', { method: 'POST', body: JSON.stringify({ email }) });
+                    
+                    showMessage(`✓ Successfully cancelled subscription for ${email}.`, 'info');
+                    showNotification(
+                        '🔕 Unsubscribed', 
+                        `${email} has been unsubscribed from Semiconductor Market Intelligence.`,
+                        '🔕'
+                    );
+                    emailInput.value = '';
+                    
+                    console.log('Unsubscribed:', email);
+                } catch (error) {
+                    showMessage('An error occurred. Please try again later.', 'error');
+                    showNotification('❌ Cancellation Failed', 'An error occurred. Please try again later.', '❌');
+                    console.error('Cancellation error:', error);
+                }
+            }
+        });
+
+        // Add enter key support for email input
+        emailInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                form.dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>
